@@ -5,11 +5,11 @@ import { fileURLToPath } from 'url';
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 
-const builtInOrders = [
-  'alphabetical',
-  'concentric-css',
-  'smacss',
-];
+export const builtInOrders = {
+  'alphabetical': 'alphabetical',
+  'concentric-css': 'concentric-css',
+  'smacss': 'smacss',
+};
 
 const pluginEntrypoint = ({ order = 'alphabetical', keepOverrides = false } = {}) => ({
   postcssPlugin: 'css-declaration-sorter',
@@ -23,11 +23,11 @@ const pluginEntrypoint = ({ order = 'alphabetical', keepOverrides = false } = {}
       return processCss({ css, comparator: withKeepOverrides(order) });
     }
 
-    if (!builtInOrders.includes(order))
+    if (!builtInOrders[order])
       return Promise.reject(
         Error([
           `Invalid built-in order '${order}' provided.`,
-          `Available built-in orders are: ${builtInOrders}`,
+          `Available built-in orders are: ${Object.values(builtInOrders)}`,
         ].join('\n'))
       );
 
@@ -41,6 +41,7 @@ const pluginEntrypoint = ({ order = 'alphabetical', keepOverrides = false } = {}
 });
 
 pluginEntrypoint.postcss = true;
+pluginEntrypoint.orders = builtInOrders;
 export default pluginEntrypoint;
 
 function processCss ({ css, comparator }) {
